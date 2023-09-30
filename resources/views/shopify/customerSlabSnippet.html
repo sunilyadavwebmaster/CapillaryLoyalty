@@ -1,0 +1,28 @@
+{% if customer %}
+<div class="section-header text-center">
+      <h2>{{ section.settings.heading_text | escape  }}</h2>
+</div>
+<div class="cap-slab-wrap page-width" id="cap-slab-wrap">
+</div>
+{% endif %}
+{% schema %}
+{
+  "name": "Customer Slab",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": {
+        "en": "Heading"
+      }
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.customer-slab.presets.name"
+    }
+  ]
+}
+{% endschema %}

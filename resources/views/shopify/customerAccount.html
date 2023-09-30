@@ -1,0 +1,256 @@
+
+<style type="text/css">
+.reward-app-customer{
+  display: flex;
+  align-items: flex-start;
+}
+.reward-app-customer .page-title{
+  margin: 0;
+    font-size: 40px;
+    margin-bottom: 40px;
+}
+#cap-point .row {
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.tabs-content .row .card {
+  flex-grow: unset !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  text-align: center;
+  width: 35%;
+  padding: 20px;
+}
+.tabs-content .row .card:nth-child(2){
+  margin-left: 15px;
+}
+
+.reward-app-customer .tabs {
+  width: 25%;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  background: #000;
+  border: 1px solid #000;
+  color: #fff;
+}
+
+.reward-app-customer .tabs .active-tab {
+  background: #fff;
+  position: relative;
+  color: #000;
+}
+
+.reward-app-customer .tabs .active-tab:after {
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  content: "";
+  bottom: -0.1em;
+  left: 0;
+}
+
+.reward-app-customer .tabs li {
+  display: block;
+  cursor: pointer;
+  color: #fff;
+  padding: 5px 10px;
+}
+
+.reward-app-customer .tabs-content {
+  width: 80%;
+  padding: 0;
+  list-style: none;
+}
+
+.reward-app-customer .tabs-content li {
+  display: none;
+  padding-left: 30px;
+}
+
+.reward-app-customer table {
+  box-shadow: none !important;
+}
+
+
+
+.reward-app-customer table tr th {
+  background: #e5e5e5;
+  font-weight: bold;
+  letter-spacing: normal;
+}
+
+.reward-app-customer table:not([class]) td,
+table:not([class]) th {
+  padding-left: 1rem !important;
+}
+
+.reward-app-customer tbody td,
+.reward-app-customer thead th {
+  font-size: 14px;
+  border-bottom: 2px solid #e5e5e5;
+  border-right: 2px solid #e5e5e5 !important;
+  text-align: left !important;
+}
+
+.reward-app-customer tbody td:last-child,
+.reward-app-customer thead th:last-child {
+  border-right: none !important;
+}
+  
+.reward-app-customer tbody td:first-child,
+.reward-app-customer thead th:first-child {
+  border-left: none !important;
+}
+
+#loading-image{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,0.9);
+}
+#loading-image img{
+  width: 22px;
+  margin-right: 15px;
+}
+.contributed-point .points{
+  margin-left: auto;
+    max-width: 200px;
+}
+.contributed-point h3{
+  font-weight: bold;
+  font-size: 18px;
+}
+</style>
+
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+
+<div class="customer account page-width">
+  <a href="{{ routes.account_logout_url }}">
+    {{ 'Logout' }}
+  </a>
+  <div class="reward-app-customer">
+    <ul class="tabs">
+      <li class="active-tab" id="profile-tab">My Account</li>
+      <li id="orders-tab">My Orders</li>
+      <li id="address-tab">Adderss Book</li>
+    </ul>
+    <ul class="tabs-content">
+      <li id="cap-profile">
+        <div>
+          <h1 class="page-title">My Account</h1>
+          <p><b><span>{{ customer.first_name }} {{ customer.last_name }}</span></b></p>
+          <p><b><span>{{ customer.email }}</span></b></p>
+        </div>
+      </li>
+      <li id="orders-history">
+          <h1 class="page-title">{{ 'customer.orders.title' | t }}</h1>
+          {% paginate customer.orders by 20 %}
+          {%- if customer.orders.size > 0 -%}
+            <table role="table" class="order-history">
+              <caption class="visually-hidden">{{ 'customer.orders.title' | t }}</caption>
+              <thead role="rowgroup">
+                <tr role="row">
+                  <th id="ColumnOrder" scope="col" role="columnheader">{{ 'customer.orders.order_number' | t }}</th>
+                  <th id="ColumnDate" scope="col" role="columnheader">{{ 'customer.orders.date' | t }}</th>
+                  <th id="ColumnPayment" scope="col" role="columnheader">{{ 'customer.orders.payment_status' | t }}</th>
+                  <th id="ColumnFulfillment" scope="col" role="columnheader">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.orders.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody role="rowgroup">
+                {%- for order in customer.orders -%}
+                  <tr role="row">
+                    <td
+                      id="RowOrder"
+                      role="cell"
+                      headers="ColumnOrder"
+                      data-label="{{ 'customer.orders.order_number' | t }}"
+                    >
+                      <a href="{{ order.customer_url }}" aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}">
+                        {{ order.name }}
+                      </a>
+                    </td>
+                    <td headers="RowOrder ColumnDate" role="cell" data-label="{{ 'customer.orders.date' | t }}">
+                      {{ order.created_at | time_tag: format: 'date' }}
+                    </td>
+                    <td headers="RowOrder ColumnPayment" role="cell" data-label="{{ 'customer.orders.payment_status' | t }}">
+                      {{ order.financial_status_label }}
+                    </td>
+                    <td headers="RowOrder ColumnFulfillment" role="cell" data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                      {{ order.fulfillment_status_label }}
+                    </td>
+                    <td headers="RowOrder ColumnTotal" role="cell" data-label="{{ 'customer.orders.total' | t }}">
+                      {{ order.total_price | money_with_currency }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          {%- else -%}
+            <p>{{ 'customer.orders.none' | t }}</p>
+          {%- endif -%}
+
+          {%- if paginate.pages > 1 -%}
+            {%- if paginate.parts.size > 0 -%}
+                <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
+                  <ul role="list">
+                  {%- if paginate.previous -%}
+                    <li>
+                      <a href="{{ paginate.previous.url }}" aria-label="{{ 'general.pagination.previous' | t }}">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                        </svg>
+                      </a>
+                    </li>
+                  {%- endif -%}
+
+                  {%- for part in paginate.parts -%}
+                    <li>
+                      {%- if part.is_link -%}
+                        <a href="{{ part.url }}" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">{{ part.title }}</a>
+                      {%- else -%}
+                        {%- if part.title == paginate.current_page -%}
+                          <span aria-current="page" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">{{ part.title }}</span>
+                        {%- else -%}
+                          <span>{{ part.title }}</span>
+                        {%- endif -%}
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+
+                  {%- if paginate.next -%}
+                    <li>
+                      <a href="{{ paginate.next.url }}" aria-label="{{ 'general.pagination.next' | t }}" >
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                        </svg>
+                      </a>
+                    </li>
+                  {%- endif -%}
+                  </ul>
+                </nav>
+            {%- endif -%}
+          {%- endif -%}
+          {% endpaginate %}
+      </li>
+      <li id="address-book">
+          <h1 class="page-title">Address Book</h1>
+
+          {{ customer.default_address | format_address }}
+
+          <a href="{{ routes.account_addresses_url }}">
+            {{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})
+          </a>
+      </li>
+      <li id="cap-point"></li>
+      <li id="cap-trans"></li>
+      <li id="cap-coupon" data-user-id=""></li>
+    </ul>
+  </div>
+</div>
