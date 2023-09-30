@@ -1,0 +1,1 @@
+<script>window.app.baseApiUrl="{{ env('APP_URL') }}"</script>
